@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<!--
+	Intensify by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Generic - Intensify by TEMPLATED</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="/stylesheets/main.css" />
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $("#btnSave").click(function(e){
+
+                    alert('누름');
+
+                    var user_id = $('#hidden_user_id').val();
+                    var name = $('#inputName').val();
+                    var location = $('#inputLocation').val();
+                    var category = $('#inputCategory').val();
+                    var intro = $('#inputIntro').val();
+
+                    if (name.length == ""){
+                        alert("이름을 입력해주세요.");
+                        $("#inputName").focus();
+                        return false;
+                    }               
+
+                    // 수정 처리
+                    $.ajax({
+                        url: '../mypageEdit/'+user_id,
+                        type: 'post',
+                        dataType: 'text',
+                        data: {name: name, location: location, category: category, intro: intro},
+                        success: function(data) {
+                            var json = JSON.parse(data);
+                            if (json.code == 1) { // 성공시
+
+                                alert('수정되었습니다.');
+                                var link = "http://127.0.0.1:3000/boards/mypage/" + user_id;
+                                document.location.href = link;
+                            }
+                            else { // 실패시
+                                alert("수정에 문제가 발생했습니다.\n다시 시도해주십시오");
+
+                                $('#signupEmail').val('');
+                                $('#signupPw').val('');
+                                $('#signupName').val('');
+                                $('#signupPwConfirm').val('');
+                            }
+                        }
+                    });                 
+                });
+
+                $('#deleteVolun').click(function(e){
+                    var user_id = $('#hidden_user_id').val();
+                    var check = confirm("정말 팀을 나가시겠습니까?");
+                    if(check){
+
+                        $.ajax({
+                            url: '/boards/deleteVolun/'+ volId ,
+                            type: 'post',
+                            dataType: 'text',
+                            data: {},
+                            success: function(data) { 
+                                var json = JSON.parse(data);
+							    if (json.code == 1) { 
+                                    alert('팀을 탈퇴했습니다.');
+                                    var link = "http://127.0.0.1:3000/boards/mypage/" + user_id;
+                                    document.location.href = link;
+                                }
+                                else {
+                                    alert('팀 탈퇴에 실패했습니다.');
+                                } 
+                            }
+                        });   
+
+                    }   
+                });
+            });
+        </script>
+	</head>
+	<body class="subpage">
+
+		<!-- Header -->
+			<header id="header">
+				<nav class="left">
+					<a href="#menu"><span>Menu</span></a>
+				</nav>
+				<a href="/" class="logo">intensify</a>
+				<nav class="right">
+					<a href="#" class="button alt">Log in</a>
+				</nav>
+			</header>
+
+	    <!-- Menu -->
+	    <nav id="menu">
+            <ul class="links">
+                <li><a href="/">홈</a></li>
+                <% var mypageLink = "/boards/mypage/" + user_id; %>
+                <li><a href=<%= mypageLink%>>마이페이지</a></li>
+            </ul>
+            <ul class="actions vertical">
+                <li><a href="#" class="button fit">Login</a></li>
+            </ul>
+        </nav>
+
+		<!-- Main -->
+			<section id="main" class="wrapper">
+				<div class="inner">
+					<header class="align-center">
+						<h1>My Page</h1>
+						<p>Lorem ipsum dolor sit amet nullam id egestas urna aliquam</p>
+					</header>
+			
+
+
+                    <table class="alt" id="tblEdit">
+                        <% data.forEach(function(item, index){ %> 
+                        <tr>
+                            <td><label>이름</label></td>
+                            <td><input type="text" value="<%= item.name %>" id="inputName"/></td>
+                        </tr>
+                        <tr>
+                            <td><label>활동 지역</label></td>
+                            <td>
+                                <select name="category" id="inputLocation">
+                                    <option value="">- Category -</option>
+                                    <option value="서울">서울</option>
+                                    <option value="경기">경기</option>
+                                    <option value="강원">강원</option>
+                                    <option value="충청">충청</option>
+                                    <option value="전라">전라</option>
+                                    <option value="경상">경상</option>
+                                    <option value="제주">제주</option>
+                                </select>                      
+                            </td>
+                            <!-- <td><input type="text" value="<%=item.location%>" id="inputLocation"/></td> -->
+                        </tr>
+                        <tr>
+                            <td><label>관심 분야</label></td>
+                            <td><input type="text" value="<%=item.category%>" id="inputCategory"></td>
+                        </tr>
+                        <tr>
+                            <td><label>한줄소개</label></td>
+                            <td><input type="text" value="<%=item.intro%>" id="inputIntro"></td>
+                        </tr>                                    
+                        <input type="hidden" value="<%=item.vol_id%>" id="volId"/>
+                        <input type="hidden" value="<%=user_id%>" id="hidden_user_id"/>
+                        <% }); %>
+            
+                    </table>
+
+                    <center><a class="button small" id="btnSave">저장하기</a></center>
+                    <!-- <center><a href="#" class="button special" id="aSave">저장하기</a></center> -->
+
+                    
+
+
+				</div>
+			</section>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<h2>Get In Touch</h2>
+					<ul class="actions">
+						<li><span class="icon fa-phone"></span> <a href="#">(000) 000-0000</a></li>
+						<li><span class="icon fa-envelope"></span> <a href="#">information@untitled.tld</a></li>
+						<li><span class="icon fa-map-marker"></span> 123 Somewhere Road, Nashville, TN 00000</li>
+					</ul>
+				</div>
+				<div class="copyright">
+					&copy; Untitled. Design <a href="https://templated.co">TEMPLATED</a>. Images <a href="https://unsplash.com">Unsplash</a>.
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+		<script src="/javascripts/jquery.min.js"></script>
+		<script src="/javascripts/jquery.scrolly.min.js"></script>
+		<script src="/javascripts/skel.min.js"></script>
+		<script src="/javascripts/util.js"></script>
+		<script src="/javascripts/main.js"></script>
+
+	</body>
+</html>

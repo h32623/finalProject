@@ -1,0 +1,51 @@
+
+						
+
+<% include headerLayout.ejs %>
+
+		<!-- Main -->
+			<section id="main" class="wrapper">
+				<div class="inner">
+					<header class="align-center">
+						<h1>My Page</h1>
+						<p>나의 정보를 수정할 수 있습니다</p>
+					</header>
+
+                    <table class="alt" id="tblShow">
+                        <tbody>
+                        <% data.forEach(function(item, index){ %> 
+                        <tr>
+                            <td><label>아이디</label></td>
+                            <td><%=item.email%></td>
+                        </tr>
+                        <tr>
+                            <td><label>이름</label></td>
+                            <td><%= item.name %></td>
+                        </tr>
+                        <tr>
+                            <td><label>활동 지역</label></td>
+                            <td><%=item.location%></td>
+                        </tr>
+                        <tr>
+                            <td><label>관심 분야</label></td>
+                            <td><%=item.category%></td>
+                        </tr>
+                        <tr>
+                            <td><label>한줄소개</label></td>
+                            <td><%=item.intro%></td>
+                        </tr>                      
+            
+                        <input type="hidden" value="<%=item.vol_id%>" id="volId"/>
+                        <input type="hidden" value="<%=user_id%>" id="hidden_user_id"/>
+                        <% }); %>
+                        
+                    </table>
+
+					<center><a href="../mypageEdit/<%=user_id%>" class="button special" id="aEdit">수정하기</a></center>                
+                    
+
+
+				</div>
+			</section>
+
+			<% include footerLayout.ejs %>

@@ -1,0 +1,132 @@
+<% include headerLayout.ejs %>
+<!-- Include Required Prerequisites -->
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/3/css/bootstrap.css" />
+<!-- Include Date Range Picker -->
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />	
+
+<script>
+    $(document).ready(function(){
+        $('input[name="daterange"]').daterangepicker({
+            format: 'D'
+        });
+
+
+        $('#btnRegister').click(function(e){
+
+            var volName = $('#volName').val();
+			var volIntro = $('#volIntro').val();
+            var volLimit = $('#volLimit').val();
+            var volCategory = $('#volCategory').val();
+            var daterange = $('input[name="daterange"]').val();
+            var user_id = $('#hidden_user_id').val();
+            var hashtag = $('#hashtag').val();
+
+            // alert(daterange);
+            if (volName.length == ""){
+                alert("이름을 입력해주세요.");
+                $("#volName").focus();
+                return false;
+            } 
+            if (volIntro == "") {
+                alert("설명을 입력해주세요.");
+                $("#volIntro").focus();
+                return false;                   
+            }   
+            if (volLimit == "") {
+                alert("제한 인원을 입력해주세요.");
+                $("#volLimit").focus();
+                return false;                   
+            }            
+            if (volCategory == "") {
+                alert("카테고리를 입력해주세요.");
+                $("#volCategory").focus();
+                return false;                   
+            }       
+            if (daterange == "") {
+                alert("기간을 입력해주세요.");
+                $("#daterange").focus();
+                return false;                   
+            } 
+            
+            // 봉사활동 등록 처리 
+            $.ajax({
+                url: '/boards/volunCreate/'+user_id,
+                type: 'post',
+                dataType: 'text',
+                data: {volName: volName, volIntro: volIntro, volLimit: volLimit, volCategory: volCategory, daterange: daterange, hashtag: hashtag},
+                success: function(data) {
+                    var json = JSON.parse(data);
+                    if (json.code == 1) { // 성공시
+
+                        alert('정상적으로 등록되었습니다.');
+                        var link = "http://127.0.0.1:3000/boards/list";
+                        document.location.href = link;
+
+                    }
+                    else { // 실패시
+                        alert("등록에 실패했습니다.\n다시 시도해주세요.");
+
+                    }
+                }
+            });             
+
+        });
+    });
+</script>
+
+
+
+<section id="main" class="wrapper">
+    <div id="divVolCreate" class="inner">
+        <h3>봉사활동 등록</h3><br>
+        이름<input type="text" name="volName" id="volName" value="" placeholder="봉사활동 이름" /><br>
+        소개<input type="text" name="volIntro" id="volIntro" value="" placeholder="봉사활동 소개"/><br>
+        카테고리<input type="text" name="volCategory" id="volCategory" value="" placeholder="봉사활동 카테고리"/><br>
+        인원<br><input type="number" name="volLimit" id="volLimit" value="" placeholder="제한 인원" onKeyDown="checkKeysInt(event,'');" onKeyUp="checkKeysInt(event,'');"/><br><br>
+        기간<input type="text" name="daterange"/><br>
+        #해시태그로 #분야를 #표현하세요 (**3개 작성해야 합니다!**)
+        <input type="text" name="hashtag" id="hashtag"/><br>
+        <center>
+            <a class="button special" id="btnRegister">등록하기</a>
+        </center>
+
+
+        <script>
+            $(function() {
+                $('#daterange').daterangepicker({
+                    format: "yyyy-mm-dd"
+                });
+                $('input[name="daterange"]').daterangepicker({
+                    dateFormat: 'yy/mm/dd'
+                });
+            });
+        </script>
+
+        <input type="hidden" id="hidden_user_id" value="<%=user_id%>"/>
+    </div>	
+</section>
+    <script>
+        function checkKeysInt(e,event) {
+            if(event.keyCode) {
+                var code = event.keyCode;
+                if ((code >= 48 && code <= 57) || (code >= 96 && code <= 105) || (code==8) || (code==9) || (code==46)) {
+                return;
+                } else {
+                e.returnValue = false;
+                }
+            } else if (e.which) {
+                var code = e.which;
+                if ((code >= 48 && code <= 57) || (code >= 96 && code <= 105) || (code==8) || (code==9) || (code==46)) {
+                return;
+                } else {
+                e.preventDefault();
+                }
+            }
+        }
+
+    </script>
+
+<% include footerLayout.ejs %>
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>

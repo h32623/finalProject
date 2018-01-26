@@ -1,0 +1,289 @@
+<!DOCTYPE HTML>
+<!--
+	Intensify by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Intensify by TEMPLATED</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://127.0.0.1:3000/stylesheets/main.css" />	
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			$(document).ready(function(){
+
+				
+
+// ** 1. index (공통 부분) 
+
+				// 로그인 텍스트 클릭
+				$("#aLogin").click(function(e){
+					// id: divLogin 화면 표시              
+					$("#divLogin").show();
+					$('#divSignup').hide();
+					$('#divLogout').hide();
+					// $('#aMypage').show();
+					e.stopPropagation();
+					e.preventDefault();          
+				});
+				
+				$('#aLogout').click(function(e){
+					$('#divLogout').hide();
+					$('#aLogout').hide();
+					$("#aLogin").show();
+					location.href="http://127.0.0.1:3000/users/logout";
+					e.stopPropagation();
+					e.preventDefault();
+					alert('로그아웃 됩니다!');
+				});
+
+				$('#aSignup').click(function(e){
+					$('#divSignup').show();
+					$("#divLogin").hide();
+					$('#divLogout').hide();
+					e.stopPropagation();
+					e.preventDefault();
+				});
+
+
+				$('#aList').click(function(e){
+					if( $('#sId').val() ){
+						location.href="./boards/list";
+					}
+					else{
+						alert('로그인 후 사용해주세요!');
+						location.href="http://127.0.0.1:3000";
+					}
+					
+				});
+
+				$('#aMypage').click(function(e){
+					var sId = $('#sId').val();
+					var sId = './boards/mypage/' + sId;
+					// location.href="./boards/mypage";
+					location.href=sId;
+				});
+
+				$("#btnLoginClose").click(function(e){
+					// id: divLogin 화면 표시              
+					$("#divLogin").hide();
+					$('#divLogout').show();
+					e.stopPropagation();
+					e.preventDefault();                
+				});	
+
+
+				$('#btnSignupClose').click(function(e){
+					$('#divSignup').hide();
+				});
+
+
+				// 로그인
+				$("#btnLogin").click(function(e){
+					var email = $("#email").val(); // 공백처리 후 값 세팅
+					var password = $("#password").val(); // 공백처리 후 값 세팅
+					if (email.length == ""){
+						alert("이메일을 입력해주세요.");
+						$("#email").focus();
+						return false;
+					} 
+					if (password == "") {
+						alert("비밀번호를 입력해주세요.");
+						$("#password").focus();
+						return false;                   
+					}
+					// 로그인 처리 
+					$.ajax({
+						url: '/users/login',
+						type: 'post',
+						dataType: 'text',
+						data: {email: email, password: password},
+						success: function(data) {
+							var json = JSON.parse(data);
+							if (json.code == 1) { // 성공시
+								// $("#logout").html(json.name  + " 님 환영합니다!"); // html 세팅
+								// $('#loginName').html(json.name + " 님");							
+								$('#aLogin').hide();
+								$('#aSignup').hide();
+								$('#aLogout').show();
+								$('#divLogin').hide();  
+								$('#divLogout').show();
+								location.href="/";
+							} else { // 실패시
+								alert("로그인정보가 일치하지 않습니다.\n다시 시도해주세요.");
+								$("#email").val('').focus();
+								$("#password").val('');
+							}
+						}
+					}); 
+				});	
+
+
+
+				// 회원가입
+				$('#btnSignup').click(function(e){
+					var email = $('#signupEmail').val();
+					var password = $('#signupPw').val();
+					var name = $('#signupName').val();
+					var passwordConfirm = $('#signupPwConfirm').val();
+					var intro = $('#signupIntro').val();
+
+
+					if (email.length == ""){
+						alert("이메일을 입력해주세요.");
+						$("#signupEmail").focus();
+						return false;
+					} 
+					if (password == "") {
+						alert("비밀번호를 입력해주세요.");
+						$("#signupPw").focus();
+						return false;                   
+					}
+
+					if (password != passwordConfirm) {
+						alert("입력한 비밀번호와 일치하지 않습니다.");
+						$("#signupPwConfirm").focus();
+						return false;                   
+					}
+
+					if (intro == ""){
+						alert('소개말을 입력해주세요.');
+						$('#signupIntro').focus();
+						return false;
+					}
+					
+
+					// 회원가입 처리 
+					$.ajax({
+						url: '/users/signup',
+						type: 'post',
+						dataType: 'text',
+						data: {email: email, password: password, name: name, intro: intro},
+						success: function(data) {
+							var json = JSON.parse(data);
+							if (json.code == 1) { // 성공시
+								// $("#logout").html(json.name  + " 님 환영합니다!"); // html 세팅
+								$('#loginName').html(json.name + " 님");							
+								$('#aLogin').hide();
+								$('#aSignup').hide();
+								$('#aLogout').show();
+								$('#divSignup').hide();  
+								$('#divLogout').show();
+
+								alert('회원가입이 완료되었습니다!\n 로그인을 진행해주세요.');
+								location.href="/";
+							}
+							else { // 실패시
+								alert("이미 존재하는 아이디입니다.\n다시 시도해주세요.");
+
+								$('#signupEmail').val('');
+								$('#signupPw').val('');
+								$('#signupName').val('');
+								$('#signupPwConfirm').val('');
+							}
+						}
+					}); 
+
+				});
+
+
+// **2. boardList
+
+				$('#volComm').click(function(e){
+					var volId = $('#hidden_vol_id').val();
+					location.href="http://127.0.0.1:3000/boards/volunComm/"+volId;
+				});
+
+				$('#btnClose').click(function(e){
+					$('#volView').hide();
+				});
+
+				$('#volCreate').click(function(e){
+					var user_id = $('#hidden_user_id').val();
+					location.href="http://127.0.0.1:3000/boards/volunCreate/"+user_id;					
+				});
+
+
+// **3. mypage
+
+
+
+// **4. volunComm.ejs
+				$('#btnWrite').click(function(e){
+
+					var user_id = $('#hidden_user_id').val();
+					var vol_id = $('#hidden_vol_id').val();
+					var isNotice = $('#isNotice').is(":checked");
+					var txt_content = $('#txt_content').val();
+					// txt_content = txt_content.replace(/(?:\r\n|\r|\n)/g, '<br>');
+					alert(txt_content);
+
+					if (txt_content == "") {
+						alert("내용을 입력해주세요.");
+						$("#txt_content").focus();
+						return false;                   
+					}	
+
+					// 작성한 글 등록 처리
+					$.ajax({
+						url: '/boards/write/'+user_id +"/"+ vol_id,
+						type: 'post',
+						dataType: 'text',
+						data: {isNotice: isNotice, txt_content: txt_content},
+						success: function(data) {
+							var json = JSON.parse(data);					
+							if (json.code == 1) { // 성공시
+								alert('등록되었습니다.');
+                                var link = "http://127.0.0.1:3000/boards/volunComm/" + vol_id;
+                                document.location.href = link;
+							}
+							else { // 실패시
+								alert("글 등록에 실패했습니다.");
+							}
+						}
+					}); 
+				});
+
+
+
+
+			});
+		</script>
+
+
+	</head>
+	<body>
+
+		<!-- Header -->
+		<header id="header">
+			<nav class="left">
+				<a href="#menu"><span>Menu</span></a>
+			</nav>
+			<a href="/" class="logo">volun-talk</a>
+			<nav class="right">
+				<a href="#" class="button alt small" id="aLogout">Log out</a>
+				<% if(!name) { %>
+				<a href="#" class="button alt small" id="aLogin">Log in</a>
+				<a href="#" class="button alt small" id="aSignup">Sign up</a>
+				<% } %>
+			</nav>
+		</header>
+
+						
+	<!-- Menu -->
+	<nav id="menu">
+		<ul class="links">
+			<li><a href="/">홈</a></li>
+			<% var mypageLink = "/boards/mypage/" + user_id; %>
+			<li><a href=<%= mypageLink%>>마이페이지</a></li>
+		</ul>
+		<ul class="actions vertical">
+			<li><a href="#" class="button fit">Login</a></li>
+		</ul>
+	</nav>
+
+	<% var address = "http://127.0.0.1:3000"; %>

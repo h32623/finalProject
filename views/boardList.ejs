@@ -1,0 +1,79 @@
+<% include headerLayout.ejs %>
+
+
+	<!-- Main -->
+			<section id="main" class="wrapper">
+				<div class="inner">
+					<h3>현재 신청 가능한 봉사활동 목록입니다.</h3>
+					<hr>
+					<div class="table-wrapper">
+						<table>
+							<thead>
+								<tr>
+									<th>글번호</th>
+									<th>지역</th>		
+									<th>봉사 이름</th>
+									<th>기관</th>
+									<th>봉사 카테고리</th>
+									<th>봉사 기간</th>
+									<th>신청 인원</th>
+									<th>커뮤니티</th>
+								</tr>
+							</thead>
+							<tbody>
+								<% var i=1; %>
+								<% data.forEach(function(item, index){ %> 
+								<input type="hidden" value="<%=item.vol_id%>" id="hidden_vol_id"/>
+								<input type="hidden" value="<%=user_id%>" id="hidden_user_id"/>
+								<tr>
+									<td><%= i %></td>
+									<td><%= item.agency_region %></td>								
+									<td onclick="winPop('<%=item.vol_id%>','<%=user_id%>');" style="cursor:pointer;"
+										><a href="#" id="volNameClick"><%= item.vol_name %></a>
+									</td>
+									<td><%= item.agency_name %></td>
+									<td><%= item.vol_cat %></td>
+									<td><%= item.end_date %></td>
+									<td><%= item.applied%> / <%= item.limitNum%></td>
+									<td onclick="volComm('<%=item.vol_id%>','<%=user_id%>');" style="cursor:pointer;">
+										<a href="#" id="volComm">go!</a> 
+									</td>
+									<!-- <td><a href="#" id="volComm">go!</a></td> -->
+								</tr>
+								<% i = i+1; %>
+								<% }); %>
+							</tbody>
+
+
+							<% if (isAdmin == "1"){ %>
+							<tfoot>
+								<tr>
+									<td colspan="6"></td>
+									<td colspan="2"><a id="volCreate" class="button small">봉사활동 추가하기</a></td>
+								</tr>
+							</tfoot>
+							<% } %>
+
+						</table>
+					</div>
+				</div>			
+			</section>
+
+	
+            
+            <script>
+                function winPop(no, id) {
+                    var windowOptions = 'width=1000, height=650, menubar=no, status=no,toolbar=no';
+                    window.open('/boards/volunPop/'+no +'/'+id, "volunPop", windowOptions);
+				}
+
+				function volComm(vol_id, user_id){
+					
+					location.href="http://127.0.0.1:3000/boards/volunComm/"+vol_id;
+				}
+				
+				
+			</script>
+
+
+<% include footerLayout.ejs %>

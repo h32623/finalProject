@@ -1,0 +1,83 @@
+
+<% include headerLayout.ejs %>
+	
+			<div id="divLogout">
+					<center>
+						<h3 id="logout"></h3>
+						<h2 id="loginName"></h2>
+
+						<!-- <a href="#" class="button small" id="aMypage" style="display:none">마이페이지</a> -->
+					</center>		
+			</div>
+	
+			<div id="divLogin" style="display:none;" class="inner">
+					<center><h2>Log in</h2></center>
+					<input type="email" name="email" id="email" value="" placeholder="Email" /><br>
+					<input type="password" name="password" id="password" value="" placeholder="password"/><br>
+					<center>
+						<a class="button small" id="btnLogin">로그인</a>
+						<a class="button small" id="btnLoginClose">닫기</a>
+					</center>
+			</div>
+	
+			<div id="divSignup" style="display:none;" class="inner">
+				<center><h2>Sign up</h2></center>
+				<input type="email" name="signupEmail" id="signupEmail" value="" placeholder="Email" /><br>
+				<input type="password" name="signupPw" id="signupPw" value="" placeholder="password"/><br>
+				<input type="password" name="signupPwConfirm" id="signupPwConfirm" value="" placeholder="비밀번호를 한 번 더 입력해주세요"/><br>
+				<input type="text" name="signupName" id="signupName" value="" placeholder="name" /><br>
+				<input type="text" name="signupIntro" id="signupIntro" value="" placeholder="introduce" /><br>
+				<center>
+					<a class="button small" id="btnSignup">회원가입</a>
+					<a class="button small" id="btnSignupClose">닫기</a>
+				</center>
+			</div>			
+
+		<!-- One -->
+			<section id="one" class="wrapper_3">
+				<div class="inner" align="center">
+
+					<% if(name) { %>
+						<h2><%=name%> 님</h2>
+						<input type="hidden" value="<%=user_id%>" id="sId"/>
+						<input type="hidden" value="<%=name%>" id="sName"/>
+					<% } %>
+
+					<h3>지금 진행되고 있는 봉사활동의 키워드입니다!</h3>
+					
+					<% data.forEach(function(item, index){ %> 
+						<span class="box3">
+							<span class="tag-message">#<%=item.hash1%></span>
+						</span>
+						<span class="box3">
+							<span class="tag-message">#<%=item.hash2%></span>
+						</span>
+						<span class="box3">
+							<span class="tag-message">#<%=item.hash3%></span>
+						</span>
+					<% }); %>
+				</div>
+			</section>
+
+		<!-- Two -->
+			<section id="two" class="wrapper style1 special">
+				<div class="inner">
+					<p>
+						<h2>지금 바로 새로운 봉사활동을 확인하세요!</h2>
+						<a href="#" class="button special small" id="aList">둘러보기</a>
+					</p>
+					<figure>
+					    <blockquote>
+					        "우리는 일함으로 생계를 유지하지만 나눔으로 인생을 만들어간다."
+					    </blockquote>
+					    <footer>
+					        <cite class="author">Winston Churchill</cite>
+					        <cite class="company">1874.11.30 - 1965.1.24</cite>
+					    </footer>
+					</figure>
+				</div>
+			</section>
+
+
+
+      <% include footerLayout.ejs %>

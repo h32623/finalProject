@@ -1,0 +1,121 @@
+<% include headerLayout.ejs %>
+
+<script>
+$(document).ready(function(){
+    // 채팅 전송
+    $('#btnEmit').click(function(){
+
+        var message = $('#message').val();
+        var name = $('#hidden_name').val();
+        if(message == ""){
+            alert('내용을 입력하세요!');
+        }
+        else{
+            socket.emit('message', {
+                message: message,
+                date: new Date().getHours() +":"+ new Date().getMinutes() +":"+ new Date().getSeconds(),
+                name: name
+            });
+            $('#message').val('');
+        }
+    });
+                
+    var socket = io.connect();
+    
+    socket.on('message', function(data){
+        var output = '';
+        output += '<div class="flex-item box2"><div class="chat">';
+        output += '		<div class="chat-message">' + data.name + '</div>';
+        output += '		<div class="chat-message">' + data.message;
+        output += '		<span class="chat">' + data.date + '</span>' + '</div>';
+        // output += '		<p class="chat">' + data.message + data.date + '</p>';
+        output += '</div></div>';
+        
+        $(output).prependTo('#chatContent');
+    });
+                
+});
+</script>
+
+<section id="main" class="wrapper_2">
+    <div class="inner_comm">
+        <!-- <h3>aaa 팀의 봉사활동 커뮤니티 입니다.</h3> -->
+        <!-- <hr> -->
+        <div class="row">
+
+            <!-- 팀 구성원 목록 , 본인 프로필-->
+            <div class="2u 12u$(medium)">
+                <div class="flex-item box">
+                    <div class="member">
+                        <div>
+                            <p>
+                                <% data.forEach(function(item, index){ %>
+                                <span class="image left">
+                                    <img src="http://127.0.0.1:3000/images/user_resize.png" alt="" />
+                                </span><strong><%=item.name%></strong>
+                                <div class="chat-message"><%=item.intro%></div>
+                                <hr class="tight">
+                                
+                                <input type="hidden" value="<%=vol_id%>" id="hidden_vol_id"/>
+                                <input type="hidden" value="<%=user_id%>" id="hidden_user_id"/>
+                                <input type="hidden" value="<%=name%>" id="hidden_name"/>
+                                
+                                <% }); %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 공지사항 / 한줄 게시글 -->
+            <div class="6u 12u$(medium)">
+                <div class="flex-item box">
+                    <div class="content">
+                        <div id="divWrite">
+                            <input type="checkbox" id="isNotice" name="isNotice">
+                            <label for="isNotice">공지로 등록</label><br>
+                            <textarea name="txt_content" id="txt_content" placeholder="자유롭게 이야기를 나눠주세요" rows="4"></textarea><br>
+                            <center><a href="#" class="button small" id="btnWrite">작성</a></center>
+                        </div>
+                        <hr>
+                        <div id="divBoard" style="overflow:auto; height:270px">
+
+                                <% boardData.forEach(function(item, index){ %>
+                                    <div class="flex-item box">
+                                        <div class="member">
+                                                <%if (item.isNotice == '1'){%>                                                
+                                                <a class="icon fa-bookmark"> 공지</a><br>
+                                                <%}%>
+                                        <span class="icon fa-paper-plane"></span>                                                                                        
+                                        <%=item.name%><hr class="tight">
+                                        <%=item.board_content%>
+                                 
+                                        </div>
+                                    </div>
+                                <% }); %>
+                                        
+                            
+                        </div>
+                    </div>
+                </div>                
+            </div>
+
+            <!-- 채팅 -->
+            <div class="4u 12u$(medium)">
+                <div class="flex-item box">
+                    <div class="myProfile">
+                        <center>
+                            <input id="message"/>
+                            <a href="#" class="icon fa-share" id="btnEmit"></a>
+                        </center>
+                        <ul id="chatContent" style="overflow:auto; height:600px">
+
+                        </ul>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+</section>
+
+<% include footerLayout.ejs %>

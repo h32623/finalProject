@@ -1,0 +1,104 @@
+<html>
+    <head>
+        <title>Intensify by TEMPLATED</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="/stylesheets/main.css" />	
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script>
+            $(document).ready(function(){
+
+                var volId = $('#volId').val();
+                var user_id = $('#hidden_user_id').val();
+
+                // 신청하기 버튼 클릭
+                $('#aSubmit').click(function(e){
+
+                    var check = confirm("신청하시겠습니까?");
+                    if(check){
+
+                        $.ajax({
+                            url: '/boards/join/'+ volId + '/'+user_id,
+                            type: 'get',
+                            dataType: 'text',
+                            data: {},
+                            success: function(data) { 
+                                var json = JSON.parse(data);
+							    if (json.code == 0) { 
+                                    alert('이미 진행하고 있는 봉사활동 내역이 있습니다.');
+                                    opener.document.location.reload();                         
+                                    self.close();
+                                }
+                                else if(json.code == 1){
+                                    alert("신청되었습니다."); 
+                                    opener.document.location.reload();                         
+                                    self.close();
+                                } 
+                                else if(json.code == 2){
+                                    alert('신청 가능한 인원 수를 초과하였습니다.');
+                                    opener.document.location.reload();                         
+                                    self.close();
+                                }  
+                            }
+                        });   
+
+                    }                   
+                });
+
+
+
+            });
+
+         
+        </script>
+    </head>
+<body class="inner">    
+
+        <table class="alt">
+            <% data.forEach(function(item, index){ %> 
+            <tr>
+                <td><label>봉사 이름</label></td>
+                <td><%=item.vol_name%></td>
+            </tr>
+            <tr>
+                <td><label>봉사 기관</label></td>
+                <td><%= item.agency_name %></td>
+            </tr>
+            <tr>
+                <td><label>봉사 지역</label></td>
+                <td><%=item.agency_region%></td>
+            </tr>
+            <tr>
+                <td><label>봉사 기간</label></td>
+                <td><%=item.start_date%> ~ <%=item.start_date%></td>
+            </tr>
+            <tr>
+                <td><label>봉사 내용</label></td>
+                <td><%=item.vol_intro%></td>
+            </tr> 
+            <tr>
+                <td><label>봉사 특징</label></td>
+                <% hashdata.forEach(function(hashitem, index){ %>
+                <td>#<%=hashitem.hash1%>  #<%=hashitem.hash2%>  #<%=hashitem.hash3%> </td>
+                <% }); %>
+            </tr>                       
+
+            <input type="hidden" value="<%=item.vol_id%>" id="volId"/>
+            <input type="hidden" value="<%=user_id%>" id="hidden_user_id"/>
+            <% }); %>
+
+        </table>
+        <div class="align-center">
+            <a href="#" class="button special" id="aSubmit">신청하기</a>
+            <input type="submit" value="닫기" onclick="window.close();">
+        </div>    
+
+
+		<!-- Scripts -->
+        <script src="/javascripts/jquery.min.js"></script>
+        <script src="/javascripts/jquery.scrolly.min.js"></script>
+        <script src="/javascripts/skel.min.js"></script>
+        <script src="/javascripts/util.js"></script>
+        <script src="/javascripts/main.js"></script>
+</body>
+</html>
